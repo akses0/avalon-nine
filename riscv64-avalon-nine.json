@@ -1,0 +1,18 @@
+{
+  "os": "none",
+  "llvm-target": "riscv64-unknown-none-elf",
+  "arch": "riscv64",
+  "data-layout": "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128",
+  "pointer-width": 64,
+  "linker-flavor": "ld.lld",
+  "linker": "rust-lld",
+  "llvm-abiname": "lp64d",
+  "cpu": "generic-rv64",
+  "max-atomic-width": 64,
+  "features": "+m,+a,+f,+d,+c,+zicsr,+zifencei",
+  "panic-strategy": "abort",
+  "relocation-model": "static",
+  "code-model": "medium",
+  "emit-debug-gdb-scripts": false,
+  "eh-frame-header": false
+}

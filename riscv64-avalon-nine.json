@@ -3,7 +3,7 @@
   "llvm-target": "riscv64-unknown-none-elf",
   "arch": "riscv64",
   "data-layout": "e-m:e-p:64:64-i64:64-i128:128-n32:64-S128",
-  "pointer-width": 64,
+  "target-pointer-width": 64,
   "linker-flavor": "ld.lld",
   "linker": "rust-lld",
   "llvm-abiname": "lp64d",

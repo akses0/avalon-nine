@@ -3,12 +3,18 @@
 > A perhaps foolish attempt at a new kind of operating system.
 
 Avalon Nine (A-9) is a hobby microkernel and operating system targeting RISC-V, written in Rust, built on a set of first
-principles that depart significantly from the Unix tradition. The name nods to Plan 9 — one of several influences on its
-design philosophy.
+principles that depart significantly from the Unix tradition.
 
 ---
 
 ## Philosophy
+
+A-9 tries to prove out several ideas:
+
+- Workloads are the security boundary, not a user role or a file, not even the process.
+- Workloads are isolated by default.
+- Local privilege escalation should be architecturally meaningless. There is no hierarchy of privileges to escalate through.
+- Authentication is a cryptographic proof, not merely a secret. Passwords suck and server oriented workloads don't really need them.
 
 ### Traditional multi-user based permission models holds computing back
 
@@ -41,24 +47,6 @@ This challenges the idea that you need a separate "workstation" operating system
 opposite direction that modern Linux does. Servers should not be multi-role, instead they should encourage single use,
 much like a container enforces this via process isolation. In some ways containers are the proof that Linux and its
 multi-user architecture is an anti-pattern.
-
-#### 'Does everything run as root then?'
-
-Not at all, there is no real concept of root. Yes there is an administrative user (lets call them `adm`) who is authorized 
-to allow a web service the ability to access parts of the file system, but the web service runs under a context dedicated 
-entirely to it, and it alone.
-
-#### 'Right so can I remotely interact via a shell to maintain A-9?' 
-
-Hypothetically, yes, that's just an SSH session that has been configured with specific capabilities, including network 
-access via port 22. If the administrator chooses to configure that session with every capability it would be as powerful
-as a root user session over SSH.
-
-#### 'But how does a team of people maintain A-9 then?'
-
-A-9 doesn't preclude multiple people from remotely accessing it, however, only a single person may physically access the
-system at a given time. Multiple console TTYs for the `adm` user are possible, but two users physically logging into A-9
-is intended to be impossible.
 
 ### No passwords, ever
 
@@ -95,6 +83,33 @@ process. It does not crash the kernel. It does not compromise other workloads.
 
 I realize this comes at a performance cost, but high performance is explicitly not a design goal.
 
+### Q&A
+
+### 'Does everything run as root then?'
+
+Not at all, there is no real concept of root. Yes there is an administrative user (lets call them `adm`) who is authorized
+to allow a web service the ability to access parts of the file system, but the web service runs under a context dedicated
+entirely to it, and it alone.
+
+### 'Right so can I remotely interact via a shell to maintain A-9?'
+
+Hypothetically, yes, that's just an SSH session that has been configured with specific capabilities, including network
+access via port 22. If the administrator chooses to configure that session with every capability it would be as powerful
+as a root user session over SSH.
+
+### 'But how does a team of people maintain A-9 then?'
+
+A-9 doesn't preclude multiple people from remotely accessing it, however, only a single person may physically access the
+system at a given time. Multiple console TTYs for the `adm` user are possible, but two users physically logging into A-9
+is intended to be impossible.
+
+### 'Why the name Avalon Nine? It sounds like a bad sci-fi?'
+
+Thanks, partly intentional! The first name 'Avalon' is actually inspired by the isle of Avalon from Arthurian
+legend, as synthesised in Malory's _Le Morte d'Arthur_. The 'Nine' is a tip of the hat to the makers of Plan-9 for thinking
+outside the box. Other influences on my design decisions are, [QubesOS](https://en.wikipedia.org/wiki/Qubes_OS) (Joanna Rutkowska), for treating isolation as a first class citizen, and 
+[TempleOS](https://en.wikipedia.org/wiki/TempleOS) (Terry Davis) for having the audacity to build a whole world from nothing.
+
 ---
 
 ## Influences
@@ -103,6 +118,7 @@ I realize this comes at a performance cost, but high performance is explicitly n
 - **seL4** — capability-based security, minimal trusted computing base
 - **QubesOS** — isolation as a primary primitive, not an afterthought
 - **TempleOS** — the audacity of building your own world from scratch
+
 
 ---
 
@@ -163,4 +179,4 @@ QEMU setup and hardware flashing instructions to follow once the kernel has some
 
 ---
 
-*"The name nods to Plan 9 — Avalon, the isle, access granted not assumed."*
+*"Avalon, access granted not assumed."*

@@ -108,7 +108,7 @@ is intended to be impossible.
 Thanks, partly intentional! The first name 'Avalon' is actually inspired by the isle of Avalon from Arthurian
 legend, as synthesised in Malory's _Le Morte d'Arthur_. The 'Nine' is a tip of the hat to the makers of Plan-9 for thinking
 outside the box. Other influences on my design decisions are, [QubesOS](https://en.wikipedia.org/wiki/Qubes_OS) (Joanna Rutkowska), for treating isolation as a first class citizen, and 
-[TempleOS](https://en.wikipedia.org/wiki/TempleOS) (Terry Davis) for having the audacity to build a whole world from nothing.
+[TempleOS](https://en.wikipedia.org/wiki/TempleOS) (Terry Davis) for having the audacity to rebuild the whole stack from the ground up.
 
 ---
 

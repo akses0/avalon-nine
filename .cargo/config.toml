@@ -1,7 +1,10 @@
-[target.riscv64gc-unknown-avalon]
-linker = "riscv64-unknown-none-elf"
-rustflags = []
+[build]
+target = "./riscv64-avalon-nine.json"
 
-[env]
-CFLAGS_riscv64gc_unknown_redox="-march=rv64gc -mabi=lp64d"
+[unstable]
+build-std = ["core"]
+json-target-specs = true
 
+[target.riscv64-avalon-nine]
+linker = "rust-lld"
+rustflags = ["-C", "link-arg=-Tlinker.ld"]

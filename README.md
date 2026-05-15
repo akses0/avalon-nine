@@ -155,7 +155,7 @@ What this defers explicitly to later versions:
 
 ## Longer Term Roadmap
 
-- [ ] Kernel boots in QEMU, prints to serial via SBI
+- [x] Kernel boots in QEMU, prints to serial via SBI
 - [ ] DTB parsing — discover memory map and UART from hardware
 - [ ] Trap and interrupt handling
 - [ ] Physical memory allocator

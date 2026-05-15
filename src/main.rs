@@ -10,7 +10,7 @@ struct Console;
 pub extern "C" fn kernel_main(hart_id: usize, dtb_ptr: usize) -> ! {
     let mut console = Console;
     let version = env!("CARGO_PKG_VERSION");
-    write!(console, ".: Avalon 9 Kernel {} :.\n.:  with <3 from akses  :.\n==========================\nHart ID: {}\nDTB: {:#x}\n", version, hart_id, dtb_ptr).ok();
+    write!(console, ".: Avalon 9 Kernel {} :.\n==========================\nHart ID: {}\nDTB: {:#x}\n", version, hart_id, dtb_ptr).ok();
     loop {
         unsafe {
             core::arch::asm!("wfi")

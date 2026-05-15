@@ -1,7 +1,7 @@
 .PHONY: build create-boot image-create image-update virt
 
 build:
-	echo "building..."
+	@echo "building..."
 	cargo build -Zjson-target-spec -Zbuild-std=core
 	riscv64-linux-gnu-objcopy \
     -O binary \
@@ -9,11 +9,11 @@ build:
     target/riscv64-avalon-nine/debug/avalon-nine.bin
 
 create-boot:
-	echo "creating boot script..."
+	@echo "creating boot script..."
 	mkimage -T script -A riscv -O linux -C none -n "Avalon 9 Kernel Boot Script" -d ./boot.cmd ./boot.scr
 
 image-create: build
-	echo "creating image..."
+	@echo "creating image..."
 	dd if=/dev/zero of=./boot.img bs=1M count=32
 	parted ./boot.img --script mklabel msdos mkpart primary fat32 1MiB 100%
 	sudo losetup -fP ./boot.img && \
@@ -22,12 +22,12 @@ image-create: build
 	sudo losetup -d $$free
 
 image-update: create-boot
-	echo "updating image for qemu..."
+	@echo "updating image for qemu..."
 	mcopy -i ./boot.img@@1M -o ./target/riscv64-avalon-nine/debug/avalon-nine.bin ::avalon-nine
 	mcopy -i ./boot.img@@1M -o ./boot.scr ::boot.scr
 
 virt: build  create-boot image-update
-	echo "starting qemu virtual environment..."
+	@echo "starting qemu virtual environment..."
 	qemu-system-riscv64 \
 	  -machine virt \
 	  -cpu rv64 \

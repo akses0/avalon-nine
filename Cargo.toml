@@ -8,5 +8,9 @@ license = "AGPL-3.0-or-later"
 [dependencies]
 fdt = "0.1.5"
 
+[[bin]]
+name = "avalon-nine"
+path = "arch/riscv/main.rs"
+
 [build-dependencies]
 cc = "1.2.62"

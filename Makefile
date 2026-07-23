@@ -2,7 +2,7 @@
 
 build:
 	@echo "building..."
-	cargo build -Zjson-target-spec -Zbuild-std=core --target ./riscv64-avalon-nine.json --verbose
+	cargo build -Zjson-target-spec -Zbuild-std=core --target ./arch/riscv/riscv64-avalon-nine.json --verbose
 	riscv64-linux-gnu-objcopy \
     -O binary \
     target/riscv64-avalon-nine/debug/avalon-nine \
@@ -10,7 +10,7 @@ build:
 
 create-boot:
 	@echo "creating boot script..."
-	mkimage -T script -A riscv -O linux -C none -n "Avalon 9 Kernel Boot Script" -d ./boot.cmd ./boot.scr
+	mkimage -T script -A riscv -O linux -C none -n "Avalon 9 Kernel Boot Script" -d ./arch/riscv/boot.cmd ./arch/riscv/boot.scr
 
 image-clean:
 	bin/detach-boot-images.sh
@@ -45,7 +45,7 @@ image-create: build
 image-update: create-boot
 	@echo "updating image for qemu..."
 	mcopy -i ./boot.img@@1M -o ./target/riscv64-avalon-nine/debug/avalon-nine.bin ::avalon-nine
-	mcopy -i ./boot.img@@1M -o ./boot.scr ::boot.scr
+	mcopy -i ./boot.img@@1M -o ./arch/riscv/boot.scr ::boot.scr
 
 virt: build  create-boot image-update
 	@echo "starting qemu virtual environment..."

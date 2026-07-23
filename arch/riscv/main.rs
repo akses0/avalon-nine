@@ -11,12 +11,14 @@ struct Console;
 pub extern "C" fn kernel_main(hart_id: usize, dtb_ptr: usize) -> ! {
     let mut console = Console;
     let version = env!("CARGO_PKG_VERSION");
-    let f = unsafe { fdt::Fdt::from_ptr(dtb_ptr as *const u8) }.unwrap();
-
     write!(console, ".: Avalon 9 Kernel {} :.\n==========================\nHart ID: {}\nDTB: {:#x}\n==========================\n", version, hart_id, dtb_ptr).ok();
-    write!(console, "Model: {}\n", f.root().model()).expect("expected FDT root model.");
-    write!(console, "CPU Count: {}\n", f.cpus().count()).expect("expected FDT cpus.");
-    write!(console, "Memory: {:?}\n", f.memory()).expect("expected FDT memory.");
+    unsafe {
+        let f = fdt::Fdt::from_ptr(dtb_ptr as *const u8).expect("expected a valid device tree BLOB ptr");
+        write!(console, "Model: {}\n", f.root().model()).expect("expected FDT root model.");
+        write!(console, "CPU Count: {}\n", f.cpus().count()).expect("expected FDT cpus.");
+        write!(console, "Memory: {:?}\n", f.memory()).expect("expected FDT memory.");
+    };
+
 
     loop {
         unsafe {

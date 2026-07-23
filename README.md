@@ -83,6 +83,16 @@ process. It does not crash the kernel. It does not compromise other workloads.
 
 I realize this comes at a performance cost, but high performance is explicitly not a design goal.
 
+## Boot Goals
+
+```mermaid
+flowchart LR
+    SBI["OpenSBI"] --> KERNEL["Avalon Nine"]
+
+    SBI --> UBOOT["U-Boot"]
+    UBOOT --> KERNEL
+```
+
 ### Q&A
 
 ### 'Does everything run as root then?'

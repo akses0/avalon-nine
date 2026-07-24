@@ -1,0 +1,19 @@
+[package]
+name = "riscv-virt"
+version = "0.1.0"
+edition = "2024"
+license = "AGPL-3.0-or-later"
+authors = ["J. Burger"]
+
+[dependencies]
+kernel = { path = "../kernel" }
+hardware = { path = "../hardware" }
+
+[[bin]]
+name = "avalon-nine"
+path = "src/main.rs"
+test = false
+bench = false
+
+[build-dependencies]
+cc = "1.2.62"

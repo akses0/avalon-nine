@@ -1,16 +1,7 @@
-[package]
-name = "avalon-nine"
-version = "0.1.0"
-edition = "2024"
-authors = ["akses <akses0@pm.me>"]
-license = "AGPL-3.0-or-later"
-
-[dependencies]
-fdt = "0.1.5"
-
-[[bin]]
-name = "avalon-nine"
-path = "arch/riscv/main.rs"
-
-[build-dependencies]
-cc = "1.2.62"
+[workspace]
+resolver = "2"
+members = [
+    "hardware",
+    "kernel",
+    "riscv-virt",
+]

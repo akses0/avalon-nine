@@ -2,15 +2,15 @@
 
 build:
 	@echo "building..."
-	cargo build -Zjson-target-spec -Zbuild-std=core --target ./arch/riscv/riscv64-avalon-nine.json --verbose
+	cargo build -p riscv-virt -Zbuild-std=core --target riscv64gc-unknown-none-elf --verbose
 	riscv64-linux-gnu-objcopy \
     -O binary \
-    target/riscv64-avalon-nine/debug/avalon-nine \
-    target/riscv64-avalon-nine/debug/avalon-nine.bin
+    target/riscv64gc-unknown-none-elf/debug/avalon-nine \
+    target/riscv64gc-unknown-none-elf/debug/avalon-nine.bin
 
 create-boot:
 	@echo "creating boot script..."
-	mkimage -T script -A riscv -O linux -C none -n "Avalon 9 Kernel Boot Script" -d ./arch/riscv/boot.cmd ./arch/riscv/boot.scr
+	mkimage -T script -A riscv -O linux -C none -n "Avalon 9 Kernel Boot Script" -d ./riscv-virt/arch/riscv/boot.cmd ./riscv-virt/arch/riscv/boot.scr
 
 image-clean:
 	bin/detach-boot-images.sh
@@ -44,8 +44,8 @@ image-create: build
 	sudo mkfs.vfat -F 16 "$$partition"
 image-update: create-boot
 	@echo "updating image for qemu..."
-	mcopy -i ./boot.img@@1M -o ./target/riscv64-avalon-nine/debug/avalon-nine.bin ::avalon-nine
-	mcopy -i ./boot.img@@1M -o ./arch/riscv/boot.scr ::boot.scr
+	mcopy -i ./boot.img@@1M -o ./target/riscv64gc-unknown-none-elf/debug/avalon-nine.bin ::avalon-nine
+	mcopy -i ./boot.img@@1M -o ./riscv-virt/arch/riscv/boot.scr ::boot.scr
 
 virt: build  create-boot image-update
 	@echo "starting qemu virtual environment..."

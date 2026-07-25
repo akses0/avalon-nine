@@ -1,12 +1,51 @@
-.PHONY: build create-boot image-create image-update virt
+TARGET := riscv64gc-unknown-none-elf
+
+.PHONY: build check check-all fmt fmt-check lint test doc clean-all ci pre-commit dev help \
+        create-boot image-clean image-create image-update virt
+
+# --- Quality Gates ---
+
+fmt:
+	cargo fmt --all
+
+fmt-check:
+	cargo fmt --all -- --check
+
+lint:
+	cargo clippy --workspace --all-targets -- -D warnings
+
+check:
+	cargo check -p riscv-virt -Zbuild-std=core --target $(TARGET)
+
+check-all:
+	cargo check --workspace -Zbuild-std=core --target $(TARGET)
+
+test:
+	cargo test --workspace
+
+doc:
+	cargo doc --no-deps --document-private-items
+
+clean-all:
+	cargo clean
+	rm -f boot.img boot.scr avalon-nine.bin
+
+ci: fmt-check lint check-all test
+	@echo "All checks passed."
+
+pre-commit: ci
+
+# --- Build ---
 
 build:
 	@echo "building..."
-	cargo build -p riscv-virt -Zbuild-std=core --target riscv64gc-unknown-none-elf --verbose
+	cargo build -p riscv-virt -Zbuild-std=core --target $(TARGET) --verbose
 	riscv64-linux-gnu-objcopy \
-    -O binary \
-    target/riscv64gc-unknown-none-elf/debug/avalon-nine \
-    target/riscv64gc-unknown-none-elf/debug/avalon-nine.bin
+		-O binary \
+		target/$(TARGET)/debug/avalon-nine \
+		target/$(TARGET)/debug/avalon-nine.bin
+
+# --- Deploy ---
 
 create-boot:
 	@echo "creating boot script..."
@@ -42,20 +81,57 @@ image-create: build
 		sleep 0.1; \
 	done; \
 	sudo mkfs.vfat -F 16 "$$partition"
+
 image-update: create-boot
 	@echo "updating image for qemu..."
-	mcopy -i ./boot.img@@1M -o ./target/riscv64gc-unknown-none-elf/debug/avalon-nine.bin ::avalon-nine
+	mcopy -i ./boot.img@@1M -o ./target/$(TARGET)/debug/avalon-nine.bin ::avalon-nine
 	mcopy -i ./boot.img@@1M -o ./riscv-virt/arch/riscv/boot.scr ::boot.scr
 
-virt: build  create-boot image-update
+virt: build create-boot image-update
 	@echo "starting qemu virtual environment..."
 	qemu-system-riscv64 \
-	  -machine virt \
-	  -cpu rv64 \
-	  -smp 1 \
-	  -m 256M \
-	  -nographic \
-	  -bios ~/src/opensbi/build/platform/generic/firmware/fw_dynamic.bin \
-	  -kernel ~/src/u-boot/u-boot.bin \
-	  -drive file=/home/akses/src/avalon-nine/boot.img,format=raw,id=hd0,if=none \
-	  -device virtio-blk-device,drive=hd0
+		-machine virt \
+		-cpu rv64 \
+		-smp 1 \
+		-m 256M \
+		-nographic \
+		-bios ~/src/opensbi/build/platform/generic/firmware/fw_dynamic.bin \
+		-kernel ~/src/u-boot/u-boot.bin \
+		-drive file=/home/akses/src/avalon-nine/boot.img,format=raw,id=hd0,if=none \
+		-device virtio-blk-device,drive=hd0
+
+# --- Dev ---
+
+dev: fmt check-all
+	@$(MAKE) --no-print-directory virt
+
+# --- Help ---
+
+help:
+	@echo "Available targets:"
+	@echo ""
+	@echo "Quality Gates:"
+	@echo "  fmt          Format code"
+	@echo "  fmt-check    Check code formatting"
+	@echo "  lint         Run clippy with -D warnings"
+	@echo "  check        Fast type-check (kernel crate)"
+	@echo "  check-all    Type-check all workspace crates"
+	@echo "  test         Run all tests"
+	@echo "  doc          Build documentation"
+	@echo "  clean-all    Clean build artifacts and generated files"
+	@echo "  ci           Run all quality checks (fmt-check, lint, check-all, test)"
+	@echo "  pre-commit   Alias for ci"
+	@echo ""
+	@echo "Build & Deploy:"
+	@echo "  build        Build kernel binary"
+	@echo "  create-boot  Create U-Boot boot script"
+	@echo "  image-create Create QEMU disk image"
+	@echo "  image-update Update disk image with new kernel"
+	@echo "  image-clean  Detach boot images"
+	@echo "  virt         Build and run in QEMU"
+	@echo ""
+	@echo "Dev:"
+	@echo "  dev          Format, check, and run in QEMU"
+	@echo ""
+	@echo "Other:"
+	@echo "  help         Show this help message"

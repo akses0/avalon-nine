@@ -1,5 +1,5 @@
-use fdt;
 use crate::memory::memory_region::MemoryRegion;
+use fdt;
 
 const MAX_MEMORY_REGIONS: usize = 32;
 
@@ -32,7 +32,8 @@ impl BootInfo {
             let mut memory_start = 0;
             let mut memory_size = None;
 
-            static mut BUF: [MemoryRegion; MAX_MEMORY_REGIONS] = [MemoryRegion { start: 0, size: 0 }; MAX_MEMORY_REGIONS];
+            static mut BUF: [MemoryRegion; MAX_MEMORY_REGIONS] =
+                [MemoryRegion { start: 0, size: 0 }; MAX_MEMORY_REGIONS];
             let mut count = 0;
 
             for fdt_region in f.memory().regions() {

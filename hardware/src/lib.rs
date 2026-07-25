@@ -1,5 +1,8 @@
 #![no_std]
 
+pub mod console;
+pub mod logger;
+
 use core::fmt;
 
 fn sbi_put_char(c: u8) {
